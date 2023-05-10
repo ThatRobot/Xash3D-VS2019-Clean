@@ -184,6 +184,8 @@ int gmsgShowMenu = 0;
 int gmsgGeigerRange = 0;
 int gmsgTeamNames = 0;
 
+int gmsgRainData = 0; //magic nipples - rain
+
 int gmsgStatusText = 0;
 int gmsgStatusValue = 0; 
 
@@ -231,6 +233,8 @@ void LinkUserMessages( void )
 	gmsgFade = REG_USER_MSG("ScreenFade", sizeof(ScreenFade));
 	gmsgAmmoX = REG_USER_MSG("AmmoX", 2);
 	gmsgTeamNames = REG_USER_MSG( "TeamNames", -1 );
+
+	gmsgRainData = REG_USER_MSG("RainData", 16); //magic nipples - rain
 
 	gmsgStatusText = REG_USER_MSG("StatusText", -1);
 	gmsgStatusValue = REG_USER_MSG("StatusValue", 3); 
@@ -926,7 +930,7 @@ void CBasePlayer::Killed( entvars_t *pevAttacker, int iGib )
 	// UNDONE: Put this in, but add FFADE_PERMANENT and make fade time 8.8 instead of 4.12
 	// UTIL_ScreenFade( edict(), Vector(128,0,0), 6, 15, 255, FFADE_OUT | FFADE_MODULATE );
 
-	if ( ( pev->health < -40 && iGib != GIB_NEVER ) || iGib == GIB_ALWAYS )
+	if ( ( pev->health < -4000 && iGib != GIB_NEVER ) || iGib == GIB_ALWAYS )
 	{
 		pev->solid			= SOLID_NOT;
 		GibMonster();	// This clears pev->model
@@ -1140,7 +1144,7 @@ void CBasePlayer::TabulateAmmo()
 WaterMove
 ============
 */
-#define AIRTIME	12		// lung full of air lasts this many seconds
+#define AIRTIME	1200		// lung full of air lasts this many seconds
 
 void CBasePlayer::WaterMove()
 {
@@ -2527,7 +2531,7 @@ void CBasePlayer::PostThink()
 			if ( flFallDamage > pev->health )
 			{//splat
 				// note: play on item channel because we play footstep landing on body channel
-				EMIT_SOUND(ENT(pev), CHAN_ITEM, "common/bodysplat.wav", 1, ATTN_NORM);
+				EMIT_SOUND(ENT(pev), CHAN_ITEM, "materials/metal6.wav", 1, ATTN_NORM);
 			}
 
 			if ( flFallDamage > 0 )
@@ -2701,7 +2705,7 @@ ReturnSpot:
 void CBasePlayer::Spawn( void )
 {
 	pev->classname		= MAKE_STRING("player");
-	pev->health			= 100;
+	pev->health			= 200;
 	pev->armorvalue		= 0;
 	pev->takedamage		= DAMAGE_AIM;
 	pev->solid			= SOLID_SLIDEBOX;
@@ -2722,6 +2726,20 @@ void CBasePlayer::Spawn( void )
 	m_afPhysicsFlags	= 0;
 	m_fLongJump			= FALSE;// no longjump module. 
 
+		//magic nipples - rain
+	Rain_dripsPerSecond = 0;
+	Rain_windX = 0;
+	Rain_windY = 0;
+	Rain_randX = 0;
+	Rain_randY = 0;
+	Rain_ideal_dripsPerSecond = 0;
+	Rain_ideal_windX = 0;
+	Rain_ideal_windY = 0;
+	Rain_ideal_randX = 0;
+	Rain_ideal_randY = 0;
+	Rain_endFade = 0;
+	Rain_nextFadeUpdate = 0;
+
 	g_engfuncs.pfnSetPhysicsKeyValue( edict(), "slj", "0" );
 	g_engfuncs.pfnSetPhysicsKeyValue( edict(), "hl", "1" );
 
@@ -2737,7 +2755,7 @@ void CBasePlayer::Spawn( void )
 	m_iStepLeft = 0;
 	m_flFieldOfView		= 0.5;// some monsters use this to determine whether or not the player is looking at them.
 
-	m_bloodColor	= BLOOD_COLOR_RED;
+	m_bloodColor	= DONT_BLEED;
 	m_flNextAttack = gpGlobals->time;//m_flNextAttack	= UTIL_WeaponTimeBase();
 	StartSneaking();
 
@@ -3890,6 +3908,118 @@ void CBasePlayer :: UpdateClientData( void )
 		
 		// Clear off non-time-based damage indicators
 		m_bitsDamageType &= DMG_TIMEBASED;
+	}
+
+	// calculate and update rain fading //magic nipples - rain
+	if (Rain_endFade > 0)
+	{
+		if (gpGlobals->time < Rain_endFade)
+		{ // we're in fading process
+			if (Rain_nextFadeUpdate <= gpGlobals->time)
+			{
+				int secondsLeft = Rain_endFade - gpGlobals->time + 1;
+
+				Rain_dripsPerSecond += (Rain_ideal_dripsPerSecond - Rain_dripsPerSecond) / secondsLeft;
+				Rain_windX += (Rain_ideal_windX - Rain_windX) / (float)secondsLeft;
+				Rain_windY += (Rain_ideal_windY - Rain_windY) / (float)secondsLeft;
+				Rain_randX += (Rain_ideal_randX - Rain_randX) / (float)secondsLeft;
+				Rain_randY += (Rain_ideal_randY - Rain_randY) / (float)secondsLeft;
+
+				Rain_nextFadeUpdate = gpGlobals->time + 1; // update once per second
+				Rain_needsUpdate = 1;
+
+				ALERT(at_aiconsole, "Rain fading: curdrips: %i, idealdrips %i\n", Rain_dripsPerSecond, Rain_ideal_dripsPerSecond);
+			}
+		}
+		else
+		{ // finish fading process
+			Rain_nextFadeUpdate = 0;
+			Rain_endFade = 0;
+
+			Rain_dripsPerSecond = Rain_ideal_dripsPerSecond;
+			Rain_windX = Rain_ideal_windX;
+			Rain_windY = Rain_ideal_windY;
+			Rain_randX = Rain_ideal_randX;
+			Rain_randY = Rain_ideal_randY;
+			Rain_needsUpdate = 1;
+
+			ALERT(at_aiconsole, "Rain fading finished at %i drips\n", Rain_dripsPerSecond);
+		}
+	}
+
+	// send rain message //magic nipples - rain
+	if (Rain_needsUpdate)
+	{
+		//search for rain_settings entity
+		edict_t* pFind;
+		pFind = FIND_ENTITY_BY_CLASSNAME(NULL, "rain_settings");
+		if (!FNullEnt(pFind))
+		{
+			// rain allowed on this map
+			CBaseEntity* pEnt = CBaseEntity::Instance(pFind);
+			CRainSettings* pRainSettings = (CRainSettings*)pEnt;
+
+			float raindistance = pRainSettings->Rain_Distance;
+			float rainheight = pRainSettings->pev->origin[2];
+			int rainmode = pRainSettings->Rain_Mode;
+
+			// search for constant rain_modifies
+			pFind = FIND_ENTITY_BY_CLASSNAME(NULL, "rain_modify");
+			while (!FNullEnt(pFind))
+			{
+				if (pFind->v.spawnflags & 1)
+				{
+					// copy settings to player's data and clear fading
+					CBaseEntity* pEnt = CBaseEntity::Instance(pFind);
+					CRainModify* pRainModify = (CRainModify*)pEnt;
+
+					Rain_dripsPerSecond = pRainModify->Rain_Drips;
+					Rain_windX = pRainModify->Rain_windX;
+					Rain_windY = pRainModify->Rain_windY;
+					Rain_randX = pRainModify->Rain_randX;
+					Rain_randY = pRainModify->Rain_randY;
+
+					Rain_endFade = 0;
+					break;
+				}
+				pFind = FIND_ENTITY_BY_CLASSNAME(pFind, "rain_modify");
+			}
+
+			MESSAGE_BEGIN(MSG_ONE, gmsgRainData, NULL, pev);
+			WRITE_SHORT(Rain_dripsPerSecond);
+			WRITE_COORD(raindistance);
+			WRITE_COORD(Rain_windX);
+			WRITE_COORD(Rain_windY);
+			WRITE_COORD(Rain_randX);
+			WRITE_COORD(Rain_randY);
+			WRITE_SHORT(rainmode);
+			WRITE_COORD(rainheight);
+			MESSAGE_END();
+
+			if (Rain_dripsPerSecond)
+				ALERT(at_aiconsole, "Sending enabling rain message\n");
+			else
+				ALERT(at_aiconsole, "Sending disabling rain message\n");
+		}
+		else
+		{ // no rain on this map
+			Rain_dripsPerSecond = 0;
+			Rain_windX = 0;
+			Rain_windY = 0;
+			Rain_randX = 0;
+			Rain_randY = 0;
+			Rain_ideal_dripsPerSecond = 0;
+			Rain_ideal_windX = 0;
+			Rain_ideal_windY = 0;
+			Rain_ideal_randX = 0;
+			Rain_ideal_randY = 0;
+			Rain_endFade = 0;
+			Rain_nextFadeUpdate = 0;
+
+			ALERT(at_aiconsole, "Clearing rain data\n");
+		}
+
+		Rain_needsUpdate = 0;
 	}
 
 	// Update Flashlight

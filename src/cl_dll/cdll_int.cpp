@@ -45,7 +45,6 @@ void IN_Commands( void );
 /*
 ========================== 
     Initialize
-
 Called when the DLL is first loaded.
 ==========================
 */
@@ -70,7 +69,6 @@ void	DLLEXPORT HUD_DirectorMessage( int iSize, void *pbuf );
 /*
 ================================
 HUD_GetHullBounds
-
   Engine calls this to enumerate player collision hulls, for prediction.  Return 0 if the hullnumber doesn't exist.
 ================================
 */
@@ -103,7 +101,6 @@ int DLLEXPORT HUD_GetHullBounds( int hullnumber, float *mins, float *maxs )
 /*
 ================================
 HUD_ConnectionlessPacket
-
  Return 1 if the packet is valid.  Set response_buffer_size if you want to send a response packet.  Incoming, it holds the max
   size of the response_buffer, so you must zero it out if you choose not to respond.
 ================================
@@ -153,7 +150,6 @@ int DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 /*
 ==========================
 	HUD_VidInit
-
 Called when the game initializes
 and whenever the vid_mode is changed
 so the HUD can reinitialize itself.
@@ -171,7 +167,6 @@ int DLLEXPORT HUD_VidInit( void )
 /*
 ==========================
 	HUD_Init
-
 Called whenever the client connects
 to a server.  Reinitializes all 
 the hud variables.
@@ -189,7 +184,6 @@ void DLLEXPORT HUD_Init( void )
 /*
 ==========================
 	HUD_Redraw
-
 called every screen frame to
 redraw the HUD.
 ===========================
@@ -206,12 +200,10 @@ int DLLEXPORT HUD_Redraw( float time, int intermission )
 /*
 ==========================
 	HUD_UpdateClientData
-
 called every time shared client
 dll/engine data gets changed,
 and gives the cdll a chance
 to modify the data.
-
 returns 1 if anything has been changed, 0 otherwise.
 ==========================
 */
@@ -226,7 +218,6 @@ int DLLEXPORT HUD_UpdateClientData(client_data_t *pcldata, float flTime )
 /*
 ==========================
 	HUD_Reset
-
 Called at start and end of demos to restore to "non"HUD state.
 ==========================
 */
@@ -239,7 +230,6 @@ void DLLEXPORT HUD_Reset( void )
 /*
 ==========================
 HUD_Frame
-
 Called by engine every frame that client .dll is loaded
 ==========================
 */
@@ -255,7 +245,6 @@ void DLLEXPORT HUD_Frame( double time )
 /*
 ==========================
 HUD_VoiceStatus
-
 Called when a player starts or stops talking.
 ==========================
 */
@@ -268,7 +257,6 @@ void DLLEXPORT HUD_VoiceStatus(int entindex, qboolean bTalking)
 /*
 ==========================
 HUD_DirectorEvent
-
 Called when a director event message was received
 ==========================
 */
@@ -277,5 +265,4 @@ void DLLEXPORT HUD_DirectorMessage( int iSize, void *pbuf )
 {
 	 gHUD.m_Spectator.DirectorMessage( iSize, pbuf );
 }
-
 

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "keydefs.h"
 #include "menu_btnsbmp_table.h"
 
-#define ART_BANNER		"gfx/shell/head_creategame"
+#define ART_BANNER		"gfx/shell/splash"
 
 #define ID_BACKGROUND	0
 #define ID_BANNER		1

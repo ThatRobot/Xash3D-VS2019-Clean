@@ -1258,14 +1258,6 @@ void SV_Physics_Compound( edict_t *ent )
 	if( ent->v.solid != SOLID_TRIGGER )
 		ent->v.solid = SOLID_NOT;
 
-	switch( parent->v.movetype )
-	{
-	case MOVETYPE_PUSH:
-	case MOVETYPE_PUSHSTEP:
-		break;
-	default: return;
-	}
-
 	// not initialized ?
 	if( ent->v.ltime == 0.0f )
 	{

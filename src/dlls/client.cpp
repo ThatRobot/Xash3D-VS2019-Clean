@@ -602,6 +602,22 @@ void ServerActivate( edict_t *pEdictList, int edictCount, int clientMax )
 		if ( pClass && !(pClass->pev->flags & FL_DORMANT) )
 		{
 			pClass->Activate();
+			// Override movetype and aiment here, for parenting stuff
+			if (!FStringNull(pClass->movewith))
+			{
+				auto pParent = UTIL_FindEntityByTargetname(nullptr, STRING(pClass->movewith));
+				if (pParent && !FNullEnt(pParent->pev))
+				{
+					pClass->pev->movetype = MOVETYPE_COMPOUND;
+					pClass->pev->aiment = pParent->edict();
+
+					ALERT(at_console, "succesfully parents entity %s to entity %s!\n", STRING(pClass->pev->classname), STRING(pParent->pev->classname));
+				}
+				else
+					ALERT(at_console, "cant find target parent: %s!\n", STRING(pClass->movewith));
+			}
+			else
+				ALERT(at_console, "this %s entity isnt parented!\n", STRING(pClass->pev->classname));
 		}
 		else
 		{
@@ -690,6 +706,7 @@ void ClientPrecache( void )
 	// setup precaches always needed
 	PRECACHE_SOUND("player/sprayer.wav");			// spray paint sound for PreAlpha
 	
+	PRECACHE_SOUND("player/plyrjmp.wav");			// Jump sound!
 	// PRECACHE_SOUND("player/pl_jumpland2.wav");		// UNDONE: play 2x step sound
 	
 	PRECACHE_SOUND("player/pl_fallpain2.wav");		

@@ -106,13 +106,13 @@ typedef struct hull_s
 #define STEP_WADE		7		// wading in liquid
 #define STEP_LADDER		8		// climbing ladder
 
-#define PLAYER_FATAL_FALL_SPEED		1024// approx 60 feet
-#define PLAYER_MAX_SAFE_FALL_SPEED	580// approx 20 feet
+#define PLAYER_FATAL_FALL_SPEED		1200// approx 60 feet
+#define PLAYER_MAX_SAFE_FALL_SPEED	900// approx 20 feet
 #define DAMAGE_FOR_FALL_SPEED		(float) 100 / ( PLAYER_FATAL_FALL_SPEED - PLAYER_MAX_SAFE_FALL_SPEED )// damage per unit per second.
 #define PLAYER_MIN_BOUNCE_SPEED		200
-#define PLAYER_FALL_PUNCH_THRESHHOLD (float)350 // won't punch player's screen/make scrape noise unless player falling at least this fast.
+#define PLAYER_FALL_PUNCH_THRESHHOLD (float)1000 // won't punch player's screen/make scrape noise unless player falling at least this fast.
 
-#define PLAYER_LONGJUMP_SPEED 350 // how fast we longjump
+#define PLAYER_LONGJUMP_SPEED 200 // how fast we longjump
 
 // double to float warning
 #pragma warning(disable : 4244)
@@ -1564,8 +1564,10 @@ void PM_CatagorizePosition (void)
 		// If we hit a steep plane, we are not on ground
 		if ( tr.plane.normal[2] < 0.7)
 			pmove->onground = -1;	// too steep
-		else
+		else{
 			pmove->onground = tr.ent;  // Otherwise, point to index of ent under us.
+			pmove->candoublejump = 0;
+		}
 
 		// If we are on something...
 		if (pmove->onground != -1)
@@ -2062,6 +2064,7 @@ void PM_LadderMove( physent_t *pLadder )
 	VectorScale( ladderCenter, 0.5, ladderCenter );
 
 	pmove->movetype = MOVETYPE_FLY;
+	pmove->candoublejump = 0;
 
 	// On ladder, convert movement to be relative to the ladder
 
@@ -2094,6 +2097,8 @@ void PM_LadderMove( physent_t *pLadder )
 		{
 			pmove->movetype = MOVETYPE_WALK;
 			VectorScale( trace.plane.normal, 270, pmove->velocity );
+			pmove->onground = -1;
+			pmove->oldbuttons |= IN_JUMP;	// fix to properly double jump off ladders - thanks Badis :D
 		}
 		else
 		{
@@ -2305,6 +2310,7 @@ void PM_Physics_Toss()
 	{	
 		// entity is trapped in another solid
 		pmove->onground = trace.ent;
+		pmove->candoublejump = 0;
 		VectorCopy (vec3_origin, pmove->velocity);
 		return;
 	}
@@ -2336,6 +2342,7 @@ void PM_Physics_Toss()
 		{
 			// we're rolling on the ground, add static friction.
 			pmove->onground = trace.ent;
+			pmove->candoublejump = 0;
 			pmove->velocity[2] = 0;
 		}
 
@@ -2346,6 +2353,7 @@ void PM_Physics_Toss()
 		if (vel < (30 * 30) || (pmove->movetype != MOVETYPE_BOUNCE && pmove->movetype != MOVETYPE_BOUNCEMISSILE))
 		{
 			pmove->onground = trace.ent;
+			pmove->candoublejump = 0; //SAFEGUARD SAFEGUARDS
 			VectorCopy (vec3_origin, pmove->velocity);
 		}
 		else
@@ -2469,7 +2477,7 @@ void PM_Jump (void)
 			pmove->velocity[2] = 50;
 
 		// play swiming sound
-		if ( pmove->flSwimTime <= 0 )
+		if ( pmove->flSwimTime <= 20 )
 		{
 			// Don't play sound again for 1 second
 			pmove->flSwimTime = 1000;
@@ -2494,7 +2502,7 @@ void PM_Jump (void)
 	}
 
 	// No more effect
- 	if ( pmove->onground == -1 )
+ 	if ( pmove->onground == -1 && pmove->candoublejump == -1) //TF2-style double jump edit
 	{
 		// Flag that we jumped.
 		// HACK HACK HACK
@@ -2506,12 +2514,19 @@ void PM_Jump (void)
 	if ( pmove->oldbuttons & IN_JUMP )
 		return;		// don't pogo stick
 
-	// In the air now.
+	// In the air now, handles doublejump too.
+	int hasdoublejumped = 0; // Has player double jumped?
+
+	if (pmove->onground == -1) { // If player is off ground, enable double jump
+		pmove->candoublejump = -1;
+		hasdoublejumped = 1;
+	}
     pmove->onground = -1;
 
 	PM_PreventMegaBunnyJumping();
 
-	//pmove->PM_PlaySound( CHAN_BODY, "player/plyrjmp8.wav", 0.5, ATTN_NORM, 0, PITCH_NORM );
+	// Make jump sound.
+	pmove->PM_PlaySound( CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM );
 	PM_PlayStepSound( PM_MapTextureTypeStepType( pmove->chtexturetype ), 1.0 );
 
 	// See if user can super long jump?
@@ -2544,7 +2559,67 @@ void PM_Jump (void)
 	}
 	else
 	{
-		pmove->velocity[2] = sqrt(2 * 800 * 45.0);
+		// Double jump to boost on all 8 directions
+
+		if (hasdoublejumped) {
+			for (i = 0; i < 2; i++)
+			{
+				if ((pmove->cmd.buttons & (IN_MOVERIGHT | IN_MOVELEFT)) == IN_MOVERIGHT) // If moving right
+				{
+					if (pmove->cmd.buttons & IN_BACK) // ..And backwards
+					{
+						pmove->velocity[i] = (-pmove->forward[i] + pmove->right[i]) * PLAYER_LONGJUMP_SPEED * 1.2;
+						pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
+					}
+					else if (pmove->cmd.buttons & IN_FORWARD) // ..And forwards
+					{
+						// pmove->Con_DPrintf("forward is (.3%f .3%f .3%f)\n", pmove->forward[0], pmove->forward[1], pmove->forward[2]);
+						pmove->velocity[i] = (pmove->forward[i] + pmove->right[i]) * PLAYER_LONGJUMP_SPEED * 1.2;
+						pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
+					}
+					else // Just to the right
+					{
+						pmove->velocity[i] = pmove->right[i] * PLAYER_LONGJUMP_SPEED * 1.6;
+						pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
+					}
+				}
+				else if ((pmove->cmd.buttons & (IN_MOVERIGHT | IN_MOVELEFT)) == IN_MOVELEFT) // If moving left
+				{
+					if (pmove->cmd.buttons & IN_BACK) // ..And backwards
+					{
+						pmove->velocity[i] = (-pmove->forward[i] - pmove->right[i]) * PLAYER_LONGJUMP_SPEED * 1.2;
+						pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
+					}
+					else if (pmove->cmd.buttons & IN_FORWARD) // ..And forwards
+					{
+						pmove->velocity[i] = (pmove->forward[i] - pmove->right[i]) * PLAYER_LONGJUMP_SPEED * 1.2;
+						pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
+					}
+					else // Just to the left
+					{
+						pmove->velocity[i] = -pmove->right[i] * PLAYER_LONGJUMP_SPEED * 1.6;
+						pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
+					}
+				}
+				else
+				{
+					if (pmove->cmd.buttons & IN_BACK) // If moving backward
+					{
+						pmove->velocity[i] = -pmove->forward[i] * PLAYER_LONGJUMP_SPEED * 1.6;
+						pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
+					}
+					else if (pmove->cmd.buttons & IN_FORWARD) // If moving forward
+					{
+						pmove->velocity[i] = pmove->forward[i] * PLAYER_LONGJUMP_SPEED * 1.6;
+						pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
+					}
+				}
+			}
+		}
+		if(pmove->velocity[2] <= 0)
+			pmove->velocity[2] = sqrt(2 * 800 * 45.0);
+		else
+			pmove->velocity[2] += sqrt(2 * 800 * 45.0);
 	}
 
 	// Decay it for simulation

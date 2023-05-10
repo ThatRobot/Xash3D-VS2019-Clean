@@ -416,8 +416,8 @@ CGrenade * CGrenade:: ShootTimed( entvars_t *pevOwner, Vector vecStart, Vector v
 	pGrenade->pev->gravity = 0.5;
 	pGrenade->pev->friction = 0.8;
 
-	SET_MODEL(ENT(pGrenade->pev), "models/w_grenade.mdl");
-	pGrenade->pev->dmg = 100;
+	SET_MODEL(ENT(pGrenade->pev), "models/grenade.mdl");
+	pGrenade->pev->dmg = gSkillData.plrDmgM203Grenade;
 
 	return pGrenade;
 }

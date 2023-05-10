@@ -198,12 +198,12 @@ void CMP5::PrimaryAttack()
 	if ( g_pGameRules->IsDeathmatch() )
 	{
 		// optimized multiplayer. Widened to make it easier to hit a moving player
-		m_pPlayer->FireBullets( 1, vecSrc, vecAiming, VECTOR_CONE_6DEGREES, 8192, BULLET_PLAYER_MP5, 2 );
+		m_pPlayer->FireBullets( 1, vecSrc, vecAiming, VECTOR_CONE_10DEGREES, 8192, BULLET_PLAYER_MP5, 2 );
 	}
 	else
 	{
 		// single player spread
-		m_pPlayer->FireBullets( 1, vecSrc, vecAiming, VECTOR_CONE_3DEGREES, 8192, BULLET_PLAYER_MP5, 2 );
+		m_pPlayer->FireBullets( 1, vecSrc, vecAiming, VECTOR_CONE_8DEGREES, 8192, BULLET_PLAYER_MP5, 2 );
 	}
 
 	if (!m_iClip && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0)
@@ -263,10 +263,13 @@ void CMP5::SecondaryAttack( void )
  
 	UTIL_MakeVectors( m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle );
 
+	float time = 2.0;
+
 	// we don't add in player velocity anymore.
-	CGrenade::ShootContact( m_pPlayer->pev, 
+	// now shoots bouncy nades! - T/Bot
+	CGrenade::ShootTimed( m_pPlayer->pev, 
 							m_pPlayer->pev->origin + m_pPlayer->pev->view_ofs + gpGlobals->v_forward * 16, 
-							gpGlobals->v_forward * 800 );
+							gpGlobals->v_forward * 500 , time);
 	
 	m_flNextPrimaryAttack = gpGlobals->time + 1;
 	m_flNextSecondaryAttack = gpGlobals->time + 1;

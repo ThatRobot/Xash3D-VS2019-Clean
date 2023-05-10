@@ -156,7 +156,7 @@ void CHudHealth::GetPainColor( int &r, int &g, int &b )
 #else
 	if (m_iHealth > 25)
 	{
-		UnpackRGB(r,g,b, RGB_YELLOWISH);
+		UnpackRGB(r,g,b, RGB_REDISH);
 	}
 	else
 	{
@@ -224,7 +224,7 @@ int CHudHealth::Draw(float flTime)
 
 		int iHeight = gHUD.m_iFontHeight;
 		int iWidth = HealthWidth/10;
-		FillRGBA(x, y, iWidth, iHeight, 255, 160, 0, a);
+		FillRGBA(x, y, iWidth, iHeight, 255, 0, 0, a);
 	}
 
 	DrawDamage(flTime);

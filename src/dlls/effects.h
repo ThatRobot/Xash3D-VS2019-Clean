@@ -79,7 +79,7 @@ public:
 
 	inline void AnimateAndDie( float framerate ) 
 	{ 
-		SetThink(&CSprite::AnimateUntilDead);
+		SetThink(&CSprite::AnimateUntilDead); 
 		pev->framerate = framerate;
 		pev->dmgtime = gpGlobals->time + (m_maxFrame / framerate); 
 		pev->nextthink = gpGlobals->time; 
@@ -168,7 +168,7 @@ public:
 
 	static CBeam *BeamCreate( const char *pSpriteName, int width );
 
-	inline void LiveForTime(float time) { SetThink(&CBeam::SUB_Remove); pev->nextthink = gpGlobals->time + time; }
+	inline void LiveForTime( float time ) { SetThink(&CBeam::SUB_Remove); pev->nextthink = gpGlobals->time + time; }
 	inline void	BeamDamageInstant( TraceResult *ptr, float damage ) 
 	{ 
 		pev->dmg = damage; 
@@ -204,6 +204,47 @@ public:
 	CSprite	*m_pSprite;
 	int		m_iszSpriteName;
 	Vector  m_firePosition;
+};
+
+//=======================
+// CRainSettings //magic nipples - rain
+//=======================
+class CRainSettings : public CBaseEntity
+{
+public:
+	void	Spawn(void);
+	void	KeyValue(KeyValueData* pkvd);
+
+	int	ObjectCaps(void) { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
+
+	virtual int		Save(CSave& save);
+	virtual int		Restore(CRestore& restore);
+	static	TYPEDESCRIPTION m_SaveData[];
+
+	float Rain_Distance;
+	int Rain_Mode;
+};
+
+//=======================
+// CRainModify //magic nipples - rain
+//=======================
+class CRainModify : public CBaseEntity
+{
+public:
+	void	Spawn(void);
+	void	KeyValue(KeyValueData* pkvd);
+	void	Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value);
+
+	int	ObjectCaps(void) { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
+
+	virtual int		Save(CSave& save);
+	virtual int		Restore(CRestore& restore);
+	static	TYPEDESCRIPTION m_SaveData[];
+
+	int Rain_Drips;
+	float Rain_windX, Rain_windY;
+	float Rain_randX, Rain_randY;
+	float fadeTime;
 };
 
 #endif		//EFFECTS_H

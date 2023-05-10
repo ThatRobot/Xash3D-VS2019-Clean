@@ -650,26 +650,26 @@ void CHGrunt :: SetYawSpeed ( void )
 		ys = 150;		
 		break;
 	case ACT_RUN:	
-		ys = 150;	
+		ys = 200;	
 		break;
 	case ACT_WALK:	
-		ys = 180;		
+		ys = 240;		
 		break;
 	case ACT_RANGE_ATTACK1:	
-		ys = 120;	
+		ys = 190;	
 		break;
 	case ACT_RANGE_ATTACK2:	
-		ys = 120;	
+		ys = 190;	
 		break;
 	case ACT_MELEE_ATTACK1:	
-		ys = 120;	
+		ys = 190;	
 		break;
 	case ACT_MELEE_ATTACK2:	
-		ys = 120;	
+		ys = 190;	
 		break;
 	case ACT_TURN_LEFT:
 	case ACT_TURN_RIGHT:	
-		ys = 180;
+		ys = 260;
 		break;
 	case ACT_GLIDE:
 	case ACT_FLY:

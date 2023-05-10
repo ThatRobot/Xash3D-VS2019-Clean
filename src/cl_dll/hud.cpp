@@ -29,6 +29,7 @@
 
 #include "demo.h"
 #include "demo_api.h"
+#include "rain.h" //magic nipples - rain
 #include "vgui_scorepanel.h"
 
 
@@ -265,6 +266,11 @@ int __MsgFunc_AllowSpec(const char *pszName, int iSize, void *pbuf)
 	return 0;
 }
 
+int __MsgFunc_RainData(const char* pszName, int iSize, void* pbuf) //magic nipples - rain
+{
+	return gHUD.MsgFunc_RainData(pszName, iSize, pbuf);
+}
+
 int __MsgFunc_AddELight(const char* pszName, int iSize, void* pbuf) //magic nipples - elights
 {
 	return gHUD.MsgFunc_AddELight(pszName, iSize, pbuf);
@@ -299,6 +305,7 @@ void CHud :: Init( void )
 	HOOK_MESSAGE( ScoreInfo );
 	HOOK_MESSAGE( TeamScore );
 	HOOK_MESSAGE( TeamInfo );
+	HOOK_MESSAGE(RainData); //magic nipples - rain
 
 	HOOK_MESSAGE( Spectator );
 	HOOK_MESSAGE( AllowSpec );
@@ -320,6 +327,7 @@ void CHud :: Init( void )
 	m_pCvarStealMouse = CVAR_CREATE( "hud_capturemouse", "1", FCVAR_ARCHIVE );
 	m_pCvarDraw = CVAR_CREATE( "hud_draw", "1", FCVAR_ARCHIVE );
 	cl_lw = gEngfuncs.pfnGetCvarPointer( "cl_lw" );
+	RainInfo = gEngfuncs.pfnRegisterVariable("cl_raininfo", "0", 0); //magic nipples - rain
 
 	m_pSpriteList = NULL;
 
@@ -357,7 +365,8 @@ void CHud :: Init( void )
 	GetClientVoiceMgr()->Init(&g_VoiceStatusHelper, (vgui::Panel**)&gViewPort);
 
 	m_Menu.Init();
-	
+
+	InitRain(); //magic nipples - rain
 	ServersInit();
 
 	MsgFunc_ResetHUD(0, 0, NULL );
@@ -370,6 +379,8 @@ CHud :: ~CHud()
 	delete [] m_rgHLSPRITEs;
 	delete [] m_rgrcRects;
 	delete [] m_rgszSpriteNames;
+
+	ResetRain(); //magic nipples - rain
 
 	if ( m_pHudList )
 	{
@@ -416,6 +427,8 @@ void CHud :: VidInit( void )
 	m_hsprLogo = 0;	
 	m_hsprCursor = 0;
 
+	ResetRain(); //magic nipples - rain
+
 	if (ScreenWidth < 640)
 		m_iRes = 320;
 	else
@@ -440,7 +453,7 @@ void CHud :: VidInit( void )
 			}
 
 			// allocated memory for sprite handle arrays
- 			m_rgHLSPRITEs = new HLSPRITE[m_iSpriteCount];
+ 			m_rgHLSPRITEs = new HSPR[m_iSpriteCount];
 			m_rgrcRects = new wrect_t[m_iSpriteCount];
 			m_rgszSpriteNames = new char[m_iSpriteCount * MAX_SPRITE_NAME_LENGTH];
 
@@ -483,7 +496,7 @@ void CHud :: VidInit( void )
 		delete [] m_rgszSpriteNames;
 
 		// allocated memory for sprite handle arrays
- 		m_rgHLSPRITEs = new HLSPRITE[m_iSpriteCount];
+ 		m_rgHLSPRITEs = new HSPR[m_iSpriteCount];
 		m_rgrcRects = new wrect_t[m_iSpriteCount];
 		m_rgszSpriteNames = new char[m_iSpriteCount * MAX_SPRITE_NAME_LENGTH];
 

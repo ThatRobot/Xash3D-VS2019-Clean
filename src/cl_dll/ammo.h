@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 *   Use, distribution, and modification of this source code and/or resulting
@@ -38,21 +38,21 @@ struct WEAPON
 
 	int		iCount;		// # of itesm in plist
 
-	HLSPRITE hActive;
+	HSPR hActive;
 	wrect_t rcActive;
-	HLSPRITE hInactive;
+	HSPR hInactive;
 	wrect_t rcInactive;
-	HLSPRITE	hAmmo;
+	HSPR	hAmmo;
 	wrect_t rcAmmo;
-	HLSPRITE hAmmo2;
+	HSPR hAmmo2;
 	wrect_t rcAmmo2;
-	HLSPRITE hCrosshair;
+	HSPR hCrosshair;
 	wrect_t rcCrosshair;
-	HLSPRITE hAutoaim;
+	HSPR hAutoaim;
 	wrect_t rcAutoaim;
-	HLSPRITE hZoomedCrosshair;
+	HSPR hZoomedCrosshair;
 	wrect_t rcZoomedCrosshair;
-	HLSPRITE hZoomedAutoaim;
+	HSPR hZoomedAutoaim;
 	wrect_t rcZoomedAutoaim;
 };
 

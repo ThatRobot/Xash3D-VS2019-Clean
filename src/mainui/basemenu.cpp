@@ -37,13 +37,13 @@ cvar_t		*ui_showmodels;
 uiStatic_t	uiStatic;
 
 char		uiEmptyString[256];
-const char	*uiSoundIn	= "media/launch_upmenu1.wav";
-const char	*uiSoundOut	= "media/launch_dnmenu1.wav";
+const char	*uiSoundIn	= "";
+const char	*uiSoundOut	= "";
 const char	*uiSoundLaunch	= "media/launch_select2.wav";
-const char	*uiSoundGlow	= "media/launch_glow1.wav";
-const char	*uiSoundBuzz	= "media/launch_deny2.wav";
-const char	*uiSoundKey	= "media/launch_select1.wav";
-const char	*uiSoundRemoveKey	= "media/launch_deny1.wav";
+const char	*uiSoundGlow	= "";
+const char	*uiSoundBuzz	= "";
+const char	*uiSoundKey	= "";
+const char	*uiSoundRemoveKey	= "";
 const char	*uiSoundMove	= "";		// Xash3D not use movesound
 const char	*uiSoundNull	= "";
 
@@ -1398,7 +1398,6 @@ void UI_Precache( void )
 	UI_Video_Precache();
 	UI_VidOptions_Precache();
 	UI_VidModes_Precache();
-	UI_CustomGame_Precache();
 	UI_Credits_Precache();
 }
 
@@ -1606,7 +1605,7 @@ void UI_Init( void )
 	Cmd_AddCommand( "menu_video", UI_Video_Menu );
 	Cmd_AddCommand( "menu_vidoptions", UI_VidOptions_Menu );
 	Cmd_AddCommand( "menu_vidmodes", UI_VidModes_Menu );
-	Cmd_AddCommand( "menu_customgame", UI_CustomGame_Menu );
+	
 
 	CHECK_MAP_LIST( TRUE );
 

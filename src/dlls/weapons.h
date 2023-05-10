@@ -86,7 +86,7 @@ public:
 #define MAX_WEAPONS			32
 
 
-#define MAX_NORMAL_BATTERY	100
+#define MAX_NORMAL_BATTERY	0.1
 
 
 // weapon weight factors (for auto-switching)   (-1 = noswitch)
@@ -108,8 +108,8 @@ public:
 
 // weapon clip/carry ammo capacities
 #define URANIUM_MAX_CARRY		100
-#define	_9MM_MAX_CARRY			250
-#define _357_MAX_CARRY			36
+#define	_9MM_MAX_CARRY			60
+#define _357_MAX_CARRY			7
 #define BUCKSHOT_MAX_CARRY		125
 #define BOLT_MAX_CARRY			50
 #define ROCKET_MAX_CARRY		5
@@ -118,15 +118,15 @@ public:
 #define TRIPMINE_MAX_CARRY		5
 #define SNARK_MAX_CARRY			15
 #define HORNET_MAX_CARRY		8
-#define M203_GRENADE_MAX_CARRY	10
+#define M203_GRENADE_MAX_CARRY	5
 
 // the maximum amount of ammo each weapon's clip can hold
 #define WEAPON_NOCLIP			-1
 
 //#define CROWBAR_MAX_CLIP		WEAPON_NOCLIP
 #define GLOCK_MAX_CLIP			17
-#define PYTHON_MAX_CLIP			6
-#define MP5_MAX_CLIP			50
+#define PYTHON_MAX_CLIP			7
+#define MP5_MAX_CLIP			30
 #define MP5_DEFAULT_AMMO		25
 #define SHOTGUN_MAX_CLIP		8
 #define CROSSBOW_MAX_CLIP		5

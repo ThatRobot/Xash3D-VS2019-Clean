@@ -136,9 +136,6 @@
     <ClCompile Include="ammohistory.cpp">
       <Filter>Source Files\HUD</Filter>
     </ClCompile>
-    <ClCompile Include="battery.cpp">
-      <Filter>Source Files\HUD</Filter>
-    </ClCompile>
     <ClCompile Include="health.cpp">
       <Filter>Source Files\HUD</Filter>
     </ClCompile>
@@ -224,6 +221,12 @@
       <Filter>Source Files\HUD</Filter>
     </ClCompile>
     <ClCompile Include="statusbar.cpp">
+      <Filter>Source Files\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Xash3D-VS2019\src\cl_dll\rain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="battery.cpp">
       <Filter>Source Files\HUD</Filter>
     </ClCompile>
   </ItemGroup>
@@ -356,6 +359,9 @@
     </ClInclude>
     <ClInclude Include="vgui_SpectatorPanel.h">
       <Filter>Header Files\VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Xash3D-VS2019\src\cl_dll\rain.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -288,9 +288,6 @@ static void UI_Main_Callback( void *self, int event )
 			UI_SaveLoad_Menu();
 		else UI_LoadGame_Menu();
 		break;
-	case ID_CUSTOMGAME:
-		UI_CustomGame_Menu();
-		break;
 	case ID_PREVIEWS:
 		SHELL_EXECUTE( MenuStrings[HINT_PREVIEWS_CMD], NULL, false );
 		break;
@@ -355,7 +352,7 @@ static void UI_Main_Init( void )
 	uiMain.console.generic.id = ID_CONSOLE;
 	uiMain.console.generic.type = QMTYPE_BM_BUTTON;
 	uiMain.console.generic.name = "Console";
-	uiMain.console.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW;
+	uiMain.console.generic.flags = QMF_DROPSHADOW;
 	uiMain.console.generic.x = UI_MAINSELECTION_POSX;
 	uiMain.console.generic.y = CL_IsActive() ? 180 : 230;
 	uiMain.console.generic.callback = UI_Main_Callback;
@@ -365,7 +362,7 @@ static void UI_Main_Init( void )
 	uiMain.resumeGame.generic.id = ID_RESUME;
 	uiMain.resumeGame.generic.type = QMTYPE_BM_BUTTON;
 	uiMain.resumeGame.generic.name = "Resume game";
-	uiMain.resumeGame.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
+	uiMain.resumeGame.generic.flags = QMF_DROPSHADOW|QMF_NOTIFY;
 	uiMain.resumeGame.generic.statusText = MenuStrings[HINT_RESUME_GAME];
 	uiMain.resumeGame.generic.x = UI_MAINSELECTION_POSX;
 	uiMain.resumeGame.generic.y = 230;
@@ -376,7 +373,7 @@ static void UI_Main_Init( void )
 	uiMain.newGame.generic.id = ID_NEWGAME;
 	uiMain.newGame.generic.type = QMTYPE_BM_BUTTON;
 	uiMain.newGame.generic.name = "New game";
-	uiMain.newGame.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
+	uiMain.newGame.generic.flags = QMF_DROPSHADOW|QMF_NOTIFY;
 	uiMain.newGame.generic.statusText = MenuStrings[HINT_NEWGAME];
 	uiMain.newGame.generic.x = UI_MAINSELECTION_POSX;
 	uiMain.newGame.generic.y = 280;
@@ -390,7 +387,7 @@ static void UI_Main_Init( void )
 	uiMain.hazardCourse.generic.id = ID_HAZARDCOURSE;
 	uiMain.hazardCourse.generic.type = QMTYPE_BM_BUTTON;
 	uiMain.hazardCourse.generic.name = "Hazard course";
-	uiMain.hazardCourse.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
+	uiMain.hazardCourse.generic.flags = QMF_DROPSHADOW|QMF_NOTIFY;
 	uiMain.hazardCourse.generic.statusText = MenuStrings[HINT_HAZARD_COURSE];
 	uiMain.hazardCourse.generic.x = UI_MAINSELECTION_POSX;
 	uiMain.hazardCourse.generic.y = 330;
@@ -400,7 +397,7 @@ static void UI_Main_Init( void )
 
 	uiMain.saveRestore.generic.id = ID_SAVERESTORE;
 	uiMain.saveRestore.generic.type = QMTYPE_BM_BUTTON;
-	uiMain.saveRestore.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
+	uiMain.saveRestore.generic.flags = QMF_DROPSHADOW|QMF_NOTIFY;
 
 	// server.dll needs for reading savefiles or startup newgame
 	if( !CheckGameDll( ))
@@ -430,7 +427,7 @@ static void UI_Main_Init( void )
 
 	uiMain.configuration.generic.id = ID_CONFIGURATION;
 	uiMain.configuration.generic.type = QMTYPE_BM_BUTTON;
-	uiMain.configuration.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
+	uiMain.configuration.generic.flags = QMF_DROPSHADOW|QMF_NOTIFY;
 	uiMain.configuration.generic.name = "Configuration";
 	uiMain.configuration.generic.statusText = MenuStrings[HINT_CONFIGURATION];
 	uiMain.configuration.generic.x = UI_MAINSELECTION_POSX;
@@ -441,7 +438,7 @@ static void UI_Main_Init( void )
 
 	uiMain.multiPlayer.generic.id = ID_MULTIPLAYER;
 	uiMain.multiPlayer.generic.type = QMTYPE_BM_BUTTON;
-	uiMain.multiPlayer.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
+	uiMain.multiPlayer.generic.flags = QMF_DROPSHADOW|QMF_NOTIFY;
 	uiMain.multiPlayer.generic.name = "Multiplayer";
 	uiMain.multiPlayer.generic.statusText = MenuStrings[HINT_MULTIPLAYER];
 	uiMain.multiPlayer.generic.x = UI_MAINSELECTION_POSX;
@@ -461,8 +458,8 @@ static void UI_Main_Init( void )
 
 	uiMain.customGame.generic.id = ID_CUSTOMGAME;
 	uiMain.customGame.generic.type = QMTYPE_BM_BUTTON;
-	uiMain.customGame.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
-	uiMain.customGame.generic.name = "Custom Game";
+	uiMain.customGame.generic.flags = QMF_INACTIVE;
+	uiMain.customGame.generic.name = "";
 	uiMain.customGame.generic.statusText = MenuStrings[HINT_CUSTOM_GAME];
 	uiMain.customGame.generic.x = UI_MAINSELECTION_POSX;
 	uiMain.customGame.generic.y = bTrainMap ? 530 : 480;

@@ -21,7 +21,7 @@
 //
 
 
-#define RGB_YELLOWISH 0x00FFA000 //255,160,0
+#define RGB_YELLOWISH 0x00FF1010 //255,160,0
 #define RGB_REDISH 0x00FF1010 //255,160,0
 #define RGB_GREENISH 0x0000A000 //0,160,0
 
@@ -32,7 +32,7 @@
 #define DHN_DRAWZERO 1
 #define DHN_2DIGITS  2
 #define DHN_3DIGITS  4
-#define MIN_ALPHA	 100	
+#define MIN_ALPHA	 255	
 
 #define		HUDELEM_ACTIVE	1
 
@@ -198,7 +198,7 @@ public:
 	int MsgFunc_Train(const char *pszName, int iSize, void *pbuf);
 
 private:
-	HLSPRITE m_HLSPRITE;
+	HSPR m_HLSPRITE;
 	int m_iPos;
 
 };
@@ -393,8 +393,8 @@ public:
 	int MsgFunc_Battery(const char *pszName,  int iSize, void *pbuf );
 	
 private:
-	HLSPRITE m_HLSPRITE1;
-	HLSPRITE m_HLSPRITE2;
+	HSPR m_HLSPRITE1;
+	HSPR m_HLSPRITE2;
 	wrect_t *m_prc1;
 	wrect_t *m_prc2;
 	int	  m_iBat;	
@@ -417,9 +417,9 @@ public:
 	int MsgFunc_FlashBat(const char *pszName,  int iSize, void *pbuf );
 	
 private:
-	HLSPRITE m_HLSPRITE1;
-	HLSPRITE m_HLSPRITE2;
-	HLSPRITE m_hBeam;
+	HSPR m_HLSPRITE1;
+	HSPR m_HLSPRITE2;
+	HSPR m_hBeam;
 	wrect_t *m_prc1;
 	wrect_t *m_prc2;
 	wrect_t *m_prcBeam;
@@ -530,7 +530,7 @@ private:
 	typedef struct
 	{
 		char szSpriteName[MAX_ICONSPRITENAME_LENGTH];
-		HLSPRITE spr;
+		HSPR spr;
 		wrect_t rc;
 		unsigned char r, g, b;
 	} icon_sprite_t;
@@ -549,7 +549,7 @@ class CHud
 {
 private:
 	HUDLIST						*m_pHudList;
-	HLSPRITE						m_hsprLogo;
+	HSPR						m_hsprLogo;
 	int							m_iLogo;
 	client_sprite_t				*m_pSpriteList;
 	int							m_iSpriteCount;
@@ -559,7 +559,7 @@ private:
 
 public:
 
-	HLSPRITE						m_hsprCursor;
+	HSPR						m_hsprCursor;
 	float m_flTime;	   // the current client time
 	float m_fOldTime;  // the time at which the HUD was last redrawn
 	double m_flTimeDelta; // the difference between flTime and fOldTime
@@ -572,6 +572,7 @@ public:
 	int		m_iRes;
 	cvar_t  *m_pCvarStealMouse;
 	cvar_t	*m_pCvarDraw;
+	cvar_t* RainInfo; //magic nipples - rain
 
 	int m_iFontHeight;
 	int DrawHudNumber(int x, int y, int iFlags, int iNumber, int r, int g, int b );
@@ -583,13 +584,13 @@ public:
 private:
 	// the memory for these arrays are allocated in the first call to CHud::VidInit(), when the hud.txt and associated sprites are loaded.
 	// freed in ~CHud()
-	HLSPRITE *m_rgHLSPRITEs;	/*[HUD_SPRITE_COUNT]*/			// the sprites loaded from hud.txt
+	HSPR *m_rgHLSPRITEs;	/*[HUD_SPRITE_COUNT]*/			// the sprites loaded from hud.txt
 	wrect_t *m_rgrcRects;	/*[HUD_SPRITE_COUNT]*/
 	char *m_rgszSpriteNames; /*[HUD_SPRITE_COUNT][MAX_SPRITE_NAME_LENGTH]*/
 
 	struct cvar_s *default_fov;
 public:
-	HLSPRITE GetSprite( int index ) 
+	HSPR GetSprite( int index ) 
 	{
 		return (index < 0) ? 0 : m_rgHLSPRITEs[index];
 	}
@@ -636,6 +637,7 @@ public:
 	void _cdecl MsgFunc_ViewMode( const char *pszName, int iSize, void *pbuf );
 	int _cdecl MsgFunc_SetFOV(const char *pszName,  int iSize, void *pbuf);
 	int  _cdecl MsgFunc_Concuss( const char *pszName, int iSize, void *pbuf );
+	int _cdecl MsgFunc_RainData(const char* pszName, int iSize, void* pbuf); //magic nipples - rain
 	int _cdecl MsgFunc_AddELight(const char* pszName, int iSize, void* pbuf); //magic nipples - elights
 
 	// Screen information

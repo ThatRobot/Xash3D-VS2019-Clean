@@ -7,7 +7,7 @@
 //#define BANNER_Y_FIX	-20
 
 // Title Transition Time period
-#define TTT_PERIOD		200.0f //magic nipples - how fast a header moves to position | default = 200.0f
+#define TTT_PERIOD		0.1f //magic nipples - how fast a header moves to position | default = 200.0f
 
 quad_t TitleLerpQuads[2];
 int transition_initial_time;

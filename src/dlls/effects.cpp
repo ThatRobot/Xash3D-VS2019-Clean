@@ -22,6 +22,7 @@
 #include "decals.h"
 #include "func_break.h"
 #include "shake.h"
+#include "player.h" //magic nipples - rain
 
 #define	SF_GIBSHOOTER_REPEATABLE	1 // allows a gibshooter to be refired
 
@@ -108,7 +109,7 @@ void CBubbling::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE use
 
 	if ( m_state )
 	{
-		SetThink( &CBubbling::FizzThink );
+		SetThink( & CBubbling::FizzThink );
 		pev->nextthink = gpGlobals->time + 0.1;
 	}
 	else
@@ -427,7 +428,7 @@ LINK_ENTITY_TO_CLASS( trip_beam, CTripBeam );
 void CTripBeam::Spawn( void )
 {
 	CLightning::Spawn();
-	SetTouch( &CBeam::TriggerTouch );
+	SetTouch( &CTripBeam::TriggerTouch );
 	pev->solid = SOLID_TRIGGER;
 	RelinkBeam();
 }
@@ -459,7 +460,7 @@ void CLightning::Spawn( void )
 {
 	if ( FStringNull( m_iszSpriteName ) )
 	{
-		SetThink( &CBaseEntity::SUB_Remove );
+		SetThink( &CLightning::SUB_Remove );
 		return;
 	}
 	pev->solid = SOLID_NOT;							// Remove model & collisions
@@ -961,7 +962,7 @@ void CLaser::Spawn( void )
 {
 	if ( FStringNull( pev->model ) )
 	{
-		SetThink( &CBaseEntity::SUB_Remove );
+		SetThink( &CLaser::SUB_Remove );
 		return;
 	}
 	pev->solid = SOLID_NOT;							// Remove model & collisions
@@ -1245,7 +1246,7 @@ void CSprite::AnimateThink( void )
 {
 	Animate( pev->framerate * (gpGlobals->time - m_lastTime) );
 
-	pev->nextthink		= gpGlobals->time + 0.1;
+	pev->nextthink		= gpGlobals->time + 0.01; //was 0.1
 	m_lastTime			= gpGlobals->time;
 }
 
@@ -1516,7 +1517,7 @@ void CGibShooter :: ShootThink ( void )
 		}
 		else
 		{
-			SetThink ( &CBaseEntity::SUB_Remove );
+			SetThink ( &CGibShooter::SUB_Remove );
 			pev->nextthink = gpGlobals->time;
 		}
 	}
@@ -1932,8 +1933,6 @@ LINK_ENTITY_TO_CLASS( env_fade, CFade );
 #define SF_FADE_IN				0x0001		// Fade in, not out
 #define SF_FADE_MODULATE		0x0002		// Modulate, don't blend
 #define SF_FADE_ONLYONE			0x0004
-#define SF_FFADE_STAYOUT		0x0008		// ignores the duration, stays faded out until new ScreenFade message received
-#define SF_FFADE_LONGFADE		0x0016		// used to indicate the fade can be longer than 16 seconds (added for czero)
 
 void CFade::Spawn( void )
 {
@@ -1970,12 +1969,6 @@ void CFade::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType
 
 	if ( pev->spawnflags & SF_FADE_MODULATE )
 		fadeFlags |= FFADE_MODULATE;
-
-	if (pev->spawnflags & SF_FFADE_STAYOUT)
-		fadeFlags |= FFADE_STAYOUT;
-
-	if (pev->spawnflags & SF_FFADE_LONGFADE)
-		fadeFlags |= FFADE_LONGFADE;
 
 	if ( pev->spawnflags & SF_FADE_ONLYONE )
 	{
@@ -2137,7 +2130,7 @@ void CEnvFunnel::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE us
 
 	MESSAGE_END();
 
-	SetThink( &CBaseEntity::SUB_Remove );
+	SetThink( &CEnvFunnel::SUB_Remove );
 	pev->nextthink = gpGlobals->time;
 }
 
@@ -2271,6 +2264,146 @@ void CItemSoda::CanTouch ( CBaseEntity *pOther )
 	pev->movetype = MOVETYPE_NONE;
 	pev->effects = EF_NODRAW;
 	SetTouch ( NULL );
-	SetThink ( &CBaseEntity::SUB_Remove );
+	SetThink ( &CItemSoda::SUB_Remove );
 	pev->nextthink = gpGlobals->time;
+}
+
+
+//=======================
+// CRainSettings //magic nipples - rain
+//=======================
+void CRainSettings::Spawn()
+{
+	pev->solid = SOLID_NOT;
+	pev->movetype = MOVETYPE_NONE;
+	pev->effects |= EF_NODRAW;
+}
+
+void CRainSettings::KeyValue(KeyValueData* pkvd)
+{
+	if (FStrEq(pkvd->szKeyName, "m_flDistance"))
+	{
+		Rain_Distance = atof(pkvd->szValue);
+		pkvd->fHandled = TRUE;
+	}
+	else if (FStrEq(pkvd->szKeyName, "m_iMode"))
+	{
+		Rain_Mode = atoi(pkvd->szValue);
+		pkvd->fHandled = TRUE;
+	}
+	else
+	{
+		CBaseEntity::KeyValue(pkvd);
+	}
+}
+
+LINK_ENTITY_TO_CLASS(rain_settings, CRainSettings);
+
+TYPEDESCRIPTION	CRainSettings::m_SaveData[] =
+{
+	DEFINE_FIELD(CRainSettings, Rain_Distance, FIELD_FLOAT),
+	DEFINE_FIELD(CRainSettings, Rain_Mode, FIELD_INTEGER),
+};
+IMPLEMENT_SAVERESTORE(CRainSettings, CBaseEntity);
+
+//=======================
+// CRainModify //magic nipples - rain
+//=======================
+void CRainModify::Spawn()
+{
+	pev->solid = SOLID_NOT;
+	pev->movetype = MOVETYPE_NONE;
+	pev->effects |= EF_NODRAW;
+
+	if (FStringNull(pev->targetname))
+		pev->spawnflags |= 1;
+}
+
+TYPEDESCRIPTION	CRainModify::m_SaveData[] =
+{
+	DEFINE_FIELD(CRainModify, fadeTime, FIELD_FLOAT),
+	DEFINE_FIELD(CRainModify, Rain_Drips, FIELD_INTEGER),
+	DEFINE_FIELD(CRainModify, Rain_randX, FIELD_FLOAT),
+	DEFINE_FIELD(CRainModify, Rain_randY, FIELD_FLOAT),
+	DEFINE_FIELD(CRainModify, Rain_windX, FIELD_FLOAT),
+	DEFINE_FIELD(CRainModify, Rain_windY, FIELD_FLOAT),
+};
+IMPLEMENT_SAVERESTORE(CRainModify, CBaseEntity);
+
+LINK_ENTITY_TO_CLASS(rain_modify, CRainModify);
+
+void CRainModify::KeyValue(KeyValueData* pkvd)
+{
+	if (FStrEq(pkvd->szKeyName, "m_iDripsPerSecond"))
+	{
+		Rain_Drips = atoi(pkvd->szValue);
+		pkvd->fHandled = TRUE;
+	}
+	else if (FStrEq(pkvd->szKeyName, "m_flWindX"))
+	{
+		Rain_windX = atof(pkvd->szValue);
+		pkvd->fHandled = TRUE;
+	}
+	else if (FStrEq(pkvd->szKeyName, "m_flWindY"))
+	{
+		Rain_windY = atof(pkvd->szValue);
+		pkvd->fHandled = TRUE;
+	}
+	else if (FStrEq(pkvd->szKeyName, "m_flRandX"))
+	{
+		Rain_randX = atof(pkvd->szValue);
+		pkvd->fHandled = TRUE;
+	}
+	else if (FStrEq(pkvd->szKeyName, "m_flRandY"))
+	{
+		Rain_randY = atof(pkvd->szValue);
+		pkvd->fHandled = TRUE;
+	}
+	else if (FStrEq(pkvd->szKeyName, "m_flTime"))
+	{
+		fadeTime = atof(pkvd->szValue);
+		pkvd->fHandled = TRUE;
+	}
+	else
+	{
+		CBaseEntity::KeyValue(pkvd);
+	}
+}
+
+void CRainModify::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+{
+	if (pev->spawnflags & 1)
+		return; // constant
+
+	if (gpGlobals->deathmatch)
+	{
+		ALERT(at_console, "Rain error: only static rain in multiplayer\n");
+		return; // not in multiplayer
+	}
+
+	CBasePlayer* pPlayer;
+	//pPlayer = (CBasePlayer*)CBaseEntity::Instance(g_engfuncs.pfnPEntityOfEntIndex(1));
+	pPlayer = (CBasePlayer*)UTIL_PlayerByIndex(1);
+
+	if (fadeTime)
+	{ // write to 'ideal' settings
+		pPlayer->Rain_ideal_dripsPerSecond = Rain_Drips;
+		pPlayer->Rain_ideal_randX = Rain_randX;
+		pPlayer->Rain_ideal_randY = Rain_randY;
+		pPlayer->Rain_ideal_windX = Rain_windX;
+		pPlayer->Rain_ideal_windY = Rain_windY;
+
+		pPlayer->Rain_endFade = gpGlobals->time + fadeTime;
+		pPlayer->Rain_nextFadeUpdate = gpGlobals->time + 1;
+	}
+	else
+	{
+		pPlayer->Rain_dripsPerSecond = Rain_Drips;
+		pPlayer->Rain_randX = Rain_randX;
+		pPlayer->Rain_randY = Rain_randY;
+		pPlayer->Rain_windX = Rain_windX;
+		pPlayer->Rain_windY = Rain_windY;
+
+		pPlayer->Rain_needsUpdate = 1;
+	}
 }

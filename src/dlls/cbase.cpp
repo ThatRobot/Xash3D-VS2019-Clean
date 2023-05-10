@@ -198,6 +198,14 @@ void DispatchKeyValue( edict_t *pentKeyvalue, KeyValueData *pkvd )
 
 	if ( !pEntity )
 		return;
+	// get support for spirit field too
+	if (FStrEq(pkvd->szKeyName, "parent") || FStrEq(pkvd->szKeyName, "movewith"))
+	{
+		pEntity->movewith = ALLOC_STRING(pkvd->szValue);
+		pkvd->fHandled = TRUE;
+		//ALERT(at_console, "movewith parsed!\n");
+		return;
+	}
 
 	pEntity->KeyValue( pkvd );
 }
@@ -592,6 +600,8 @@ TYPEDESCRIPTION	CBaseEntity::m_SaveData[] =
 	DEFINE_FIELD( CBaseEntity, m_pfnTouch, FIELD_FUNCTION ),
 	DEFINE_FIELD( CBaseEntity, m_pfnUse, FIELD_FUNCTION ),
 	DEFINE_FIELD( CBaseEntity, m_pfnBlocked, FIELD_FUNCTION ),
+	// parenting system
+	DEFINE_FIELD(CBaseEntity, movewith, FIELD_STRING),
 };
 
 

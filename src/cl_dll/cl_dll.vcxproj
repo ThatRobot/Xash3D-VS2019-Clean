@@ -49,6 +49,7 @@
     <IntDir>$(SolutionDir)build\$(TargetName)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
+    <TargetName>client</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -155,6 +156,7 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Xash3D-VS2019\src\cl_dll\rain.cpp" />
     <ClCompile Include="..\game_shared\vgui_checkbutton2.cpp" />
     <ClCompile Include="..\game_shared\vgui_grid.cpp" />
     <ClCompile Include="..\game_shared\vgui_helpers.cpp" />
@@ -225,6 +227,7 @@
     <ClCompile Include="view.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Xash3D-VS2019\src\cl_dll\rain.h" />
     <ClInclude Include="..\common\itrackeruser.h" />
     <ClInclude Include="..\game_shared\voice_banmgr.h" />
     <ClInclude Include="..\game_shared\voice_status.h" />

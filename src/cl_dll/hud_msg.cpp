@@ -19,9 +19,12 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "parsemsg.h"
+#include "rain.h" //magic nipples - rain
 #include "r_efx.h"
 
 #define MAX_CLIENTS 32
+
+extern rain_properties Rain; //magic nipples - rain
 
 /// USER-DEFINED SERVER MESSAGE HANDLERS
 
@@ -110,6 +113,21 @@ int CHud :: MsgFunc_Concuss( const char *pszName, int iSize, void *pbuf )
 		this->m_StatusIcons.EnableIcon("dmg_concuss",255,160,0);
 	else
 		this->m_StatusIcons.DisableIcon("dmg_concuss");
+	return 1;
+}
+
+int CHud::MsgFunc_RainData(const char* pszName, int iSize, void* pbuf) //magic nipples - rain
+{
+	BEGIN_READ(pbuf, iSize);
+	Rain.dripsPerSecond = READ_SHORT();
+	Rain.distFromPlayer = READ_COORD();
+	Rain.windX = READ_COORD();
+	Rain.windY = READ_COORD();
+	Rain.randX = READ_COORD();
+	Rain.randY = READ_COORD();
+	Rain.weatherMode = READ_SHORT();
+	Rain.globalHeight = READ_COORD();
+
 	return 1;
 }
 

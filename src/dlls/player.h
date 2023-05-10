@@ -19,11 +19,11 @@
 #include "pm_materials.h"
 
 
-#define PLAYER_FATAL_FALL_SPEED		1024// approx 60 feet
-#define PLAYER_MAX_SAFE_FALL_SPEED	580// approx 20 feet
+#define PLAYER_FATAL_FALL_SPEED		1200// approx 60 feet
+#define PLAYER_MAX_SAFE_FALL_SPEED	900// approx 20 feet
 #define DAMAGE_FOR_FALL_SPEED		(float) 100 / ( PLAYER_FATAL_FALL_SPEED - PLAYER_MAX_SAFE_FALL_SPEED )// damage per unit per second.
 #define PLAYER_MIN_BOUNCE_SPEED		200
-#define PLAYER_FALL_PUNCH_THRESHHOLD (float)350 // won't punch player's screen/make scrape noise unless player falling at least this fast.
+#define PLAYER_FALL_PUNCH_THRESHHOLD (float)1000 // won't punch player's screen/make scrape noise unless player falling at least this fast.
 
 //
 // Player PHYSICS FLAGS bits
@@ -310,6 +310,16 @@ public:
 	
 	float m_flNextChatTime;
 	
+	//magic nipples - rain
+	int		Rain_dripsPerSecond;
+	float	Rain_windX, Rain_windY;
+	float	Rain_randX, Rain_randY;
+	int		Rain_ideal_dripsPerSecond;
+	float	Rain_ideal_windX, Rain_ideal_windY;
+	float	Rain_ideal_randX, Rain_ideal_randY;
+	float	Rain_endFade; // 0 means off
+	float	Rain_nextFadeUpdate;
+	int		Rain_needsUpdate;
 };
 
 #define AUTOAIM_2DEGREES  0.0348994967025

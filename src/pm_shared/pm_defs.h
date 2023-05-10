@@ -130,6 +130,7 @@ typedef struct playermove_s
 	int		movetype;		// Our movement type, NOCLIP, WALK, FLY
 
 	int		onground;
+	int		candoublejump;
 	int		waterlevel;
 	int		watertype;
 	int		oldwaterlevel;

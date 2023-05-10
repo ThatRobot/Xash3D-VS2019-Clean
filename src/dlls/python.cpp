@@ -250,7 +250,7 @@ void CPython::Reload( void )
 		m_pPlayer->m_iFOV = 0;  // 0 means reset to default fov
 	}
 
-	if (DefaultReload( 6, PYTHON_RELOAD, 2.0 ))
+	if (DefaultReload( 7, PYTHON_RELOAD, 2.0 ))
 	{
 		m_flSoundDelay = gpGlobals->time + 1.5;
 	}

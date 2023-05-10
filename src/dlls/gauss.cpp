@@ -26,7 +26,7 @@
 #include "gamerules.h"
 
 
-#define	GAUSS_PRIMARY_CHARGE_VOLUME	256// how loud gauss is while charging
+#define	GAUSS_PRIMARY_CHARGE_VOLUME	210// how loud gauss is while charging
 #define GAUSS_PRIMARY_FIRE_VOLUME	450// how loud gauss is when discharged
 
 enum gauss_e {
@@ -370,9 +370,9 @@ void CGauss::StartFire( void )
 			m_pPlayer->pev->velocity = m_pPlayer->pev->velocity - gpGlobals->v_forward * flDamage * 5;
 		}
 
-		if ( !g_pGameRules->IsDeathmatch() )
+		if ( !g_pGameRules->FAllowMonsters() )
 		{
-			// in deathmatch, gauss can pop you up into the air. Not in single play.
+			// in deathmatch, gauss can pop you up into the air. Not in single play. go fuck yourself lmao i'm changing it
 			m_pPlayer->pev->velocity.z = flZVel;
 		}
 
@@ -462,19 +462,19 @@ void CGauss::Fire( Vector vecOrigSrc, Vector vecDir, float flDamage )
 				if ( m_fPrimaryFire )
 				{
 					WRITE_BYTE( 255 );   // r, g, b
-					WRITE_BYTE( 128 );   // r, g, b
+					WRITE_BYTE( 0 );   // r, g, b
 					WRITE_BYTE( 0 );   // r, g, b
 
-					WRITE_BYTE( 128 );	// brightness
+					WRITE_BYTE( 255 );	// brightness
 				}
 				else
 				{
 					// secondary shot is always white, and intensity based on charge
 					WRITE_BYTE( 255 );   // r, g, b
-					WRITE_BYTE( 255 );   // r, g, b
-					WRITE_BYTE( 255 );   // r, g, b
+					WRITE_BYTE( 128 );   // r, g, b
+					WRITE_BYTE( 0 );   // r, g, b
 				
-					WRITE_BYTE( flDamage );	// brightness
+					WRITE_BYTE( 255 );	// brightness
 				}
 
 				WRITE_BYTE( 0 );		// speed
@@ -513,19 +513,19 @@ void CGauss::Fire( Vector vecOrigSrc, Vector vecDir, float flDamage )
 				{
 					// primary shot always looks full intensity
 					WRITE_BYTE( 255 );   // r, g, b
-					WRITE_BYTE( 128 );   // r, g, b
+					WRITE_BYTE( 0 );   // r, g, b
 					WRITE_BYTE( 0 );   // r, g, b
 
-					WRITE_BYTE( 128 );	// brightness
+					WRITE_BYTE( 255 );	// brightness
 				}
 				else
 				{
 					// secondary shot is always white, and intensity based on charge
 					WRITE_BYTE( 255 );   // r, g, b
-					WRITE_BYTE( 255 );   // r, g, b
-					WRITE_BYTE( 255 );   // r, g, b
+					WRITE_BYTE( 128 );   // r, g, b
+					WRITE_BYTE( 0 );   // r, g, b
 				
-					WRITE_BYTE( flDamage );	// brightness
+					WRITE_BYTE( 255 );	// brightness
 				}
 
 				WRITE_BYTE( 0 );		// speed
@@ -765,19 +765,6 @@ void CGauss::Fire( Vector vecOrigSrc, Vector vecDir, float flDamage )
 void CGauss::WeaponIdle( void )
 {
 	ResetEmptySound( );
-
-	// play aftershock static discharge
-	if (m_flPlayAftershock && m_flPlayAftershock < gpGlobals->time)
-	{
-		switch (RANDOM_LONG(0,3))
-		{
-		case 0:	EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/electro4.wav", RANDOM_FLOAT(0.7, 0.8), ATTN_NORM); break;
-		case 1:	EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/electro5.wav", RANDOM_FLOAT(0.7, 0.8), ATTN_NORM); break;
-		case 2:	EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/electro6.wav", RANDOM_FLOAT(0.7, 0.8), ATTN_NORM); break;
-		case 3:	break; // no sound
-		}
-		m_flPlayAftershock = 0.0;
-	}
 
 	if (m_flTimeWeaponIdle > gpGlobals->time)
 		return;

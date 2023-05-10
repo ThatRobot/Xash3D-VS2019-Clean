@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "keydefs.h"
 #include "menu_btnsbmp_table.h"
 
-#define ART_BANNER			"gfx/shell/head_advoptions"
+#define ART_BANNER			"gfx/shell/splash"
 
 #define ID_BACKGROUND		0
 #define ID_BANNER			1
@@ -222,7 +222,7 @@ static void UI_GameOptions_Init( void )
 	uiGameOptions.maxFPS.generic.width = 168;
 	uiGameOptions.maxFPS.generic.height = 26;
 	uiGameOptions.maxFPS.generic.callback = UI_GameOptions_Callback;
-	uiGameOptions.maxFPS.generic.statusText = "Cap your game frame rate";
+	uiGameOptions.maxFPS.generic.statusText = "Cap your SESSION frame rate";
 	uiGameOptions.maxFPS.minValue = 20;
 	uiGameOptions.maxFPS.maxValue = 500;
 	uiGameOptions.maxFPS.range = 20;
@@ -232,7 +232,7 @@ static void UI_GameOptions_Init( void )
 	uiGameOptions.maxFPSmessage.generic.flags = QMF_SMALLFONT|QMF_INACTIVE|QMF_DROPSHADOW;
 	uiGameOptions.maxFPSmessage.generic.x = 280;
 	uiGameOptions.maxFPSmessage.generic.y = 230;
-	uiGameOptions.maxFPSmessage.generic.name = "Limit game fps";
+	uiGameOptions.maxFPSmessage.generic.name = "Limit SESSION fps";
 	uiGameOptions.maxFPSmessage.generic.color = uiColorHelp;
 
 	uiGameOptions.hand.generic.id = ID_HAND;

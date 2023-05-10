@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "keydefs.h"
 #include "menu_btnsbmp_table.h"
 
-#define ART_BANNER	     	"gfx/shell/head_config"
+#define ART_BANNER	     	"gfx/shell/splash"
 
 #define ID_BACKGROUND    	0
 #define ID_BANNER	     	1
@@ -212,7 +212,7 @@ static void UI_Options_Init( void )
 	uiOptions.update.generic.x = UI_SELECTION_POSX;
 	uiOptions.update.generic.y = 380;
 	uiOptions.update.generic.name = "Update";
-	uiOptions.update.generic.statusText = "Donwload the latest version of the Xash3D engine";
+	uiOptions.update.generic.statusText = "";
 	uiOptions.update.generic.callback = UI_Options_Callback;
 	UI_UtilSetupPicButton(&uiOptions.update,PC_UPDATE);
 
