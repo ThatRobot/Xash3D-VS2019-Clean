@@ -263,13 +263,12 @@ void CMP5::SecondaryAttack( void )
  
 	UTIL_MakeVectors( m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle );
 
-	float time = 2.0;
 
 	// we don't add in player velocity anymore.
 	// now shoots bouncy nades! - T/Bot
 	CGrenade::ShootTimed( m_pPlayer->pev, 
 							m_pPlayer->pev->origin + m_pPlayer->pev->view_ofs + gpGlobals->v_forward * 16, 
-							gpGlobals->v_forward * 500 , time);
+							gpGlobals->v_forward * 500 , 2.0);
 	
 	m_flNextPrimaryAttack = gpGlobals->time + 1;
 	m_flNextSecondaryAttack = gpGlobals->time + 1;

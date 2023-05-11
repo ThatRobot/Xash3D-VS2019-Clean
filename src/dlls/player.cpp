@@ -4707,6 +4707,21 @@ void CStripWeapons :: Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 		pPlayer->RemoveAllItems( FALSE );
 }
 
+void CBasePlayer::CreateAtPoint(const char* szName)
+{
+	// Find an ID Target
+	TraceResult tr;
+	UTIL_MakeVectors(pev->v_angle + pev->punchangle);
+	Vector vecSrc = EyePosition();
+	Vector vecEnd = vecSrc + (gpGlobals->v_forward * MAX_ID_RANGE * 4);
+	UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, edict(), &tr);
+
+	CBaseEntity* pEntity = Create((char*)szName, tr.vecEndPos, g_vecZero);
+
+	if (pEntity)
+		pEntity->pev->spawnflags |= SF_NORESPAWN;
+}
+
 
 class CRevertSaved : public CPointEntity
 {

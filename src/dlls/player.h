@@ -309,6 +309,7 @@ public:
 	char m_SbarString1[ SBAR_STRING_SIZE ];
 	
 	float m_flNextChatTime;
+	void CreateAtPoint(const char* szName);
 	
 	//magic nipples - rain
 	int		Rain_dripsPerSecond;

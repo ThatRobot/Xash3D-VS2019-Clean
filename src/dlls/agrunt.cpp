@@ -196,7 +196,7 @@ int CAGrunt::IRelationship ( CBaseEntity *pTarget )
 {
 	if ( FClassnameIs( pTarget->pev, "monster_human_grunt" ) )
 	{
-		return R_NM;
+		return R_AL;
 	}
 
 	return CSquadMonster :: IRelationship( pTarget );
@@ -385,7 +385,7 @@ void CAGrunt :: PainSound ( void )
 //=========================================================
 int	CAGrunt :: Classify ( void )
 {
-	return	CLASS_ALIEN_MILITARY;
+	return	CLASS_HUMAN_MILITARY;
 }
 
 //=========================================================
@@ -464,16 +464,26 @@ void CAGrunt :: HandleAnimEvent( MonsterEvent_t *pEvent )
 				WRITE_BYTE( 128 );			// brightness
 			MESSAGE_END();
 
-			CBaseEntity *pHornet = CBaseEntity::Create( "hornet", vecArmPos, UTIL_VecToAngles( vecDirToEnemy ), edict() );
-			UTIL_MakeVectors ( pHornet->pev->angles );
-			pHornet->pev->velocity = gpGlobals->v_forward * 300;
+			//CBaseEntity *pHornet = CBaseEntity::Create( "hornet", vecArmPos, UTIL_VecToAngles( vecDirToEnemy ), edict() );
+			//UTIL_MakeVectors ( pHornet->pev->angles );
 
-			CBaseMonster *pHornetMonster = pHornet->MyMonsterPointer();
+			// AGrunt shoots nades now - like QUAKE! - T/Bot
 
-			if ( pHornetMonster )
-			{
-				pHornetMonster->m_hEnemy = m_hEnemy;
-			}
+			Vector vecTarget = Vector(m_hEnemy->pev->origin.x, m_hEnemy->pev->origin.y, m_hEnemy->pev->absmin.z);;
+			vecTarget = vecTarget + ((vecTarget - pev->origin).Length() / gSkillData.hgruntGrenadeSpeed) * m_hEnemy->pev->velocity;
+			Vector m_vecTossVelocity = VecCheckThrow(pev, GetGunPosition(), vecTarget, gSkillData.hgruntGrenadeSpeed, 0.5);
+
+
+			CGrenade::ShootTimed(pev, vecArmPos, m_vecTossVelocity, 2.0);
+
+			//pHornet->pev->velocity = gpGlobals->v_forward * 300;
+
+			//CBaseMonster *pHornetMonster = pHornet->MyMonsterPointer();
+
+			//if ( pHornetMonster )
+			//{
+			//	pHornetMonster->m_hEnemy = m_hEnemy;
+			//}
 		}
 		break;
 
@@ -572,7 +582,7 @@ void CAGrunt :: Spawn()
 
 	pev->solid			= SOLID_SLIDEBOX;
 	pev->movetype		= MOVETYPE_STEP;
-	m_bloodColor		= BLOOD_COLOR_GREEN;
+	m_bloodColor		= BLOOD_COLOR_RED;
 	pev->effects		= 0;
 	pev->health			= gSkillData.agruntHealth;
 	m_flFieldOfView		= 0.2;// indicates the width of this monster's forward view cone ( as a dotproduct result )

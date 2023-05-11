@@ -402,6 +402,14 @@ void ClientCommand( edict_t *pEntity )
 			GetClassPtr((CBasePlayer *)pev)->GiveNamedItem( STRING(iszItem) );
 		}
 	}
+	else if (FStrEq(pcmd, "ent_create"))
+	{
+		if (g_flWeaponCheat != 0.0)
+		{
+			int iszItem = ALLOC_STRING(CMD_ARGV(1));    // Make a copy of the classname
+			GetClassPtr((CBasePlayer*)pev)->CreateAtPoint(STRING(iszItem));
+		}
+	}
 	else if ( FStrEq(pcmd, "fire") )
 	{
 		if ( g_flWeaponCheat != 0.0)
