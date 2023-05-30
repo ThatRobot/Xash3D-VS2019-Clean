@@ -28,5 +28,6 @@
 #define CHAR_TEX_COMPUTER		'P'
 #define CHAR_TEX_GLASS		'Y'
 #define CHAR_TEX_FLESH		'F'
+#define CHAR_TEX_PLAYER		'X'
 
 #endif//PM_MATERIALS_H

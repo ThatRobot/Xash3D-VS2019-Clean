@@ -72,7 +72,7 @@ int CHudBattery:: MsgFunc_Battery(const char *pszName,  int iSize, void *pbuf )
 }
 
 
-int CHudBattery::Draw(float flTime)
+/*int CHudBattery::Draw(float flTime)
 {
 	if ( gHUD.m_iHideHUDDisplay & HIDEHUD_HEALTH )
 		return 1;
@@ -139,4 +139,4 @@ int CHudBattery::Draw(float flTime)
 	x = gHUD.DrawHudNumber(x, y, DHN_3DIGITS | DHN_DRAWZERO, m_iBat, r, g, b);
 
 	return 1;
-}
+}*/

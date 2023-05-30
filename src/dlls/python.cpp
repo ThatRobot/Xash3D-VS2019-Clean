@@ -144,10 +144,10 @@ void CPython::Holster( )
 
 void CPython::SecondaryAttack( void )
 {
-	if ( !g_pGameRules->IsMultiplayer() )
+	/*if (!g_pGameRules->IsMultiplayer())
 	{
 		return;
-	}
+	}*/
 
 	if ( m_fInZoom )
 	{
@@ -157,7 +157,7 @@ void CPython::SecondaryAttack( void )
 	else
 	{
 		m_fInZoom = TRUE;
-		m_pPlayer->m_iFOV = 40;
+		m_pPlayer->m_iFOV = 35;
 	}
 
 	m_flNextSecondaryAttack = gpGlobals->time + 0.5;
@@ -250,7 +250,7 @@ void CPython::Reload( void )
 		m_pPlayer->m_iFOV = 0;  // 0 means reset to default fov
 	}
 
-	if (DefaultReload( 7, PYTHON_RELOAD, 2.0 ))
+	if (DefaultReload( 5, PYTHON_RELOAD, 2.0 ))
 	{
 		m_flSoundDelay = gpGlobals->time + 1.5;
 	}

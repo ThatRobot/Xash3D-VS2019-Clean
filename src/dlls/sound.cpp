@@ -1642,8 +1642,12 @@ float TEXTURETYPE_PlaySound(TraceResult *ptr,  Vector vecSrc, Vector vecEnd, int
 	chTextureType = 0;
 
 	if (pEntity && pEntity->Classify() != CLASS_NONE && pEntity->Classify() != CLASS_MACHINE)
-		// hit body
-		chTextureType = CHAR_TEX_FLESH;
+		if (pEntity->Classify() == CLASS_PLAYER)
+			// hit player
+			chTextureType = CHAR_TEX_PLAYER;
+		else
+			// hit body
+			chTextureType = CHAR_TEX_FLESH;
 	else
 	{
 		// hit world
@@ -1743,6 +1747,13 @@ float TEXTURETYPE_PlaySound(TraceResult *ptr,  Vector vecSrc, Vector vecEnd, int
 		fvol = 1.0;	fvolbar = 0.2;
 		rgsz[0] = "weapons/bullet_hit1.wav";
 		rgsz[1] = "weapons/bullet_hit2.wav";
+		fattn = 1.0;
+		cnt = 2;
+		break;
+	case CHAR_TEX_PLAYER:
+		fvol = 1.0; fvolbar = 0.2;
+		rgsz[0] = "weapons/player_hit1.wav";
+		rgsz[1] = "weapons/player_hit2.wav";
 		fattn = 1.0;
 		cnt = 2;
 		break;

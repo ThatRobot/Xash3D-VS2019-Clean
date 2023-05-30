@@ -87,7 +87,7 @@ float EV_HLDM_PlayTextureSound( int idx, pmtrace_t *ptr, float *vecSrc, float *v
 	if ( entity >= 1 && entity <= gEngfuncs.GetMaxClients() )
 	{
 		// hit body
-		chTextureType = CHAR_TEX_FLESH;
+		chTextureType = CHAR_TEX_PLAYER;
 	}
 	else if ( entity == 0 )
 	{
@@ -182,6 +182,13 @@ float EV_HLDM_PlayTextureSound( int idx, pmtrace_t *ptr, float *vecSrc, float *v
 		fvol = 1.0;	fvolbar = 0.2;
 		rgsz[0] = "weapons/bullet_hit1.wav";
 		rgsz[1] = "weapons/bullet_hit2.wav";
+		fattn = 1.0;
+		cnt = 2;
+		break;
+	case CHAR_TEX_PLAYER:
+		fvol = 1.0; fvolbar = 0.2;
+		rgsz[0] = "weapons/player_hit1.wav";
+		rgsz[1] = "weapons/player_hit2.wav";
 		fattn = 1.0;
 		cnt = 2;
 		break;

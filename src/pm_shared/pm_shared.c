@@ -95,6 +95,7 @@ typedef struct hull_s
 #define CHAR_TEX_COMPUTER	'P'
 #define CHAR_TEX_GLASS		'Y'
 #define CHAR_TEX_FLESH		'F'
+#define CHAR_TEX_PLAYER		'X'
 
 #define STEP_CONCRETE	0		// default step sound
 #define STEP_METAL		1		// metal floor
@@ -2563,13 +2564,13 @@ void PM_Jump (void)
 	if (pmove->onground == -1) { // If player is off ground, enable double jump
 		pmove->candoublejump = -1;
 		hasdoublejumped = 1;
+		pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
 	}
     pmove->onground = -1;
 
 	PM_PreventMegaBunnyJumping();
 
 	// Make jump sound.
-	pmove->PM_PlaySound( CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM );
 	PM_PlayStepSound( PM_MapTextureTypeStepType( pmove->chtexturetype ), 1.0 );
 
 	// See if user can super long jump?
@@ -2612,18 +2613,15 @@ void PM_Jump (void)
 					if (pmove->cmd.buttons & IN_BACK) // ..And backwards
 					{
 						pmove->velocity[i] = (-pmove->forward[i] + pmove->right[i]) * PLAYER_LONGJUMP_SPEED * 1.2;
-						pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
 					}
 					else if (pmove->cmd.buttons & IN_FORWARD) // ..And forwards
 					{
 						// pmove->Con_DPrintf("forward is (.3%f .3%f .3%f)\n", pmove->forward[0], pmove->forward[1], pmove->forward[2]);
 						pmove->velocity[i] = (pmove->forward[i] + pmove->right[i]) * PLAYER_LONGJUMP_SPEED * 1.2;
-						pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
 					}
 					else // Just to the right
 					{
 						pmove->velocity[i] = pmove->right[i] * PLAYER_LONGJUMP_SPEED * 1.6;
-						pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
 					}
 				}
 				else if ((pmove->cmd.buttons & (IN_MOVERIGHT | IN_MOVELEFT)) == IN_MOVELEFT) // If moving left
@@ -2631,17 +2629,14 @@ void PM_Jump (void)
 					if (pmove->cmd.buttons & IN_BACK) // ..And backwards
 					{
 						pmove->velocity[i] = (-pmove->forward[i] - pmove->right[i]) * PLAYER_LONGJUMP_SPEED * 1.2;
-						pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
 					}
 					else if (pmove->cmd.buttons & IN_FORWARD) // ..And forwards
 					{
 						pmove->velocity[i] = (pmove->forward[i] - pmove->right[i]) * PLAYER_LONGJUMP_SPEED * 1.2;
-						pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
 					}
 					else // Just to the left
 					{
 						pmove->velocity[i] = -pmove->right[i] * PLAYER_LONGJUMP_SPEED * 1.6;
-						pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
 					}
 				}
 				else
@@ -2649,14 +2644,13 @@ void PM_Jump (void)
 					if (pmove->cmd.buttons & IN_BACK) // If moving backward
 					{
 						pmove->velocity[i] = -pmove->forward[i] * PLAYER_LONGJUMP_SPEED * 1.6;
-						pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
 					}
 					else if (pmove->cmd.buttons & IN_FORWARD) // If moving forward
 					{
 						pmove->velocity[i] = pmove->forward[i] * PLAYER_LONGJUMP_SPEED * 1.6;
-						pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
 					}
 				}
+				pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
 			}
 		}
 		if(pmove->velocity[2] <= 0)

@@ -419,6 +419,14 @@ CGrenade * CGrenade:: ShootTimed( entvars_t *pevOwner, Vector vecStart, Vector v
 	SET_MODEL(ENT(pGrenade->pev), "models/grenade.mdl");
 	pGrenade->pev->dmg = gSkillData.plrDmgM203Grenade;
 
+	if (!FClassnameIs(pGrenade->pev->owner, "monster_name"))
+
+
+	//if (!FClassnameIs(pEntity->pev, "monster_alien_grunt")) {
+	//	return;
+	//}
+
+
 	return pGrenade;
 }
 

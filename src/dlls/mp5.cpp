@@ -153,7 +153,7 @@ void CMP5::PrimaryAttack()
 	if (m_iClip <= 0)
 	{
 		PlayEmptySound();
-		m_flNextPrimaryAttack = gpGlobals->time + 0.15;
+		m_flNextPrimaryAttack = gpGlobals->time + 0.3;
 		return;
 	}
 
