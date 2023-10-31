@@ -1544,11 +1544,6 @@ void CBaseEntity::FireBullets(ULONG cShots, Vector vecSrc, Vector vecDirShooting
 	ApplyMultiDamage(pev, pevAttacker);
 }
 
-void CBaseEntity::FirePhysBullet(ULONG cShots, Vector vecSrc, Vector vecDirShooting, Vector vecSpread, float flDistance, int iBulletType, int iTracerFreq, int iDamage, entvars_t* pevAttacker)
-{
-
-}
-
 void CBaseEntity::TraceBleed(float flDamage, Vector vecDir, TraceResult* ptr, int bitsDamageType)
 {
 	if (BloodColor() == DONT_BLEED)

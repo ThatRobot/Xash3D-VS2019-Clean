@@ -2564,14 +2564,18 @@ void PM_Jump (void)
 	if (pmove->onground == -1) { // If player is off ground, enable double jump
 		pmove->candoublejump = -1;
 		hasdoublejumped = 1;
-		pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
 	}
     pmove->onground = -1;
 
 	PM_PreventMegaBunnyJumping();
 
 	// Make jump sound.
-	PM_PlayStepSound( PM_MapTextureTypeStepType( pmove->chtexturetype ), 1.0 );
+	if (hasdoublejumped = 1) {
+		pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
+	}
+	else {
+		PM_PlayStepSound(PM_MapTextureTypeStepType(pmove->chtexturetype), 1.0);
+	}
 
 	// See if user can super long jump?
 	cansuperjump = atoi( pmove->PM_Info_ValueForKey( pmove->physinfo, "slj" ) ) == 1 ? true : false;
@@ -2616,10 +2620,9 @@ void PM_Jump (void)
 					}
 					else if (pmove->cmd.buttons & IN_FORWARD) // ..And forwards
 					{
-						// pmove->Con_DPrintf("forward is (.3%f .3%f .3%f)\n", pmove->forward[0], pmove->forward[1], pmove->forward[2]);
 						pmove->velocity[i] = (pmove->forward[i] + pmove->right[i]) * PLAYER_LONGJUMP_SPEED * 1.2;
 					}
-					else // Just to the right
+					else // and ONLY right
 					{
 						pmove->velocity[i] = pmove->right[i] * PLAYER_LONGJUMP_SPEED * 1.6;
 					}
@@ -2634,23 +2637,24 @@ void PM_Jump (void)
 					{
 						pmove->velocity[i] = (pmove->forward[i] - pmove->right[i]) * PLAYER_LONGJUMP_SPEED * 1.2;
 					}
-					else // Just to the left
+					else // and ONLY left
 					{
 						pmove->velocity[i] = -pmove->right[i] * PLAYER_LONGJUMP_SPEED * 1.6;
 					}
 				}
 				else
 				{
-					if (pmove->cmd.buttons & IN_BACK) // If moving backward
+					if (pmove->cmd.buttons & IN_BACK) // If moving ONLY backward
 					{
 						pmove->velocity[i] = -pmove->forward[i] * PLAYER_LONGJUMP_SPEED * 1.6;
 					}
-					else if (pmove->cmd.buttons & IN_FORWARD) // If moving forward
+					else if (pmove->cmd.buttons & IN_FORWARD) // If moving ONLY forward
 					{
 						pmove->velocity[i] = pmove->forward[i] * PLAYER_LONGJUMP_SPEED * 1.6;
 					}
 				}
 				pmove->PM_PlaySound(CHAN_BODY, "player/plyrjmp.wav", 0.5, ATTN_NORM, 0, PITCH_NORM);
+				pmove->Con_DPrintf("forward is (.3%f .3%f .3%f)\n", pmove->forward[0], pmove->forward[1], pmove->forward[2]);
 			}
 		}
 		if(pmove->velocity[2] <= 0)
